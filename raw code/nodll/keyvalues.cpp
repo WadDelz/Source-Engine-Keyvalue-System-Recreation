@@ -2,6 +2,10 @@
 #include <fstream>
 #include <sstream>
 
+//to anyone who sees this.i am on my phone rn so it's hard to edit the code
+//but there is a memory leak in the getfirst and getnext functions where it would create a 
+//keyvaluez* but not delete it. I will change this like tmro though so yay
+
 std::string ConvertEscapeChars(const std::string& input) {
 	std::string result;
 
@@ -228,7 +232,7 @@ keyvalues* keyvalues::GetFirstSubkey()
 					}
 				}
 				else {
-					return nullptr;
+					delete kv;
 				}
 			}
 		}
