@@ -231,9 +231,6 @@ keyvalues* keyvalues::GetFirstSubkey()
 						KvToks.push_back({ tokens[j].token, tokens[j].value });
 					}
 				}
-				else {
-					delete kv;
-				}
 			}
 		}
 	}
