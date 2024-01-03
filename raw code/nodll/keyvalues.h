@@ -225,6 +225,23 @@ public:
 
 	//--------------------------------------------------------
 	//
+	//	gets the pointer (you cant set the pointer in the file but 
+	//	you can use the SetPtr function to set the pointer
+	//
+	//--------------------------------------------------------
+	template<typename T>
+	const T& GetPtr() const;
+
+	//--------------------------------------------------------
+	//
+	// Same as above but without template
+	//
+	//--------------------------------------------------------
+	const void* GetPtr() const;
+
+
+	//--------------------------------------------------------
+	//
 	//	If this is set to true. the all the keys and values from now
 	//	on (this includes: subkeys, keyvalue pairs, nested subkeys etc...)
 	//	will use the escape sequence. the default value is false so it will
@@ -254,10 +271,44 @@ public:
 	//--------------------------------------------------------
 	void UseEscapeSequence(bool val);
 
+	//--------------------------------------------------------
+	//
+	//	sets the pointer to the input pointer of the function
+	//
+	//--------------------------------------------------------
+	void SetPtr(void* newptr);
+
+	//--------------------------------------------------------
+	//
+	//	Sets the value to the input string of the function
+	//
+	//--------------------------------------------------------
+	void SetName(const std::string& value);
+
+	//--------------------------------------------------------
+	//
+	//	Sets the value to the input int of the function
+	//
+	//--------------------------------------------------------
+	void SetValue(const std::string& value);
+
+	//--------------------------------------------------------
+	//
+	//	Sets the value to the input int of the function
+	//
+	//--------------------------------------------------------
+	void SetValue(const int& value);
+
+	//--------------------------------------------------------
+	//
+	//	Sets the value to the input float of the function
+	//
+	//--------------------------------------------------------
+	void SetValue(const float& value);
+
 private:
 
 	std::vector<Token> GetToken();
-
 	std::vector<Token> tokens;
 	std::string fbuf;
 
@@ -268,10 +319,12 @@ private:
 
 	int i = 0, FirstSubkey = 0, v = 0, FirstKey = 0;
 
-	//values
 	std::string name, value;
-	int intkey;
+
+	//values
+	int intval;
 	float floatval;
+	void* ptr;
 };
 
 //--------------------------------------------------------
