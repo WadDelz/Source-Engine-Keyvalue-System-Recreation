@@ -2,10 +2,6 @@
 #include <fstream>
 #include <sstream>
 
-//to anyone who sees this.i am on my phone rn so it's hard to edit the code
-//but there is a memory leak in the getfirst and getnext functions where it would create a 
-//keyvaluez* but not delete it. I will change this like tmro though so yay
-
 std::string ConvertEscapeChars(const std::string& input) {
 	std::string result;
 
@@ -192,13 +188,25 @@ const std::string keyvalues::GetString() const
 
 const int keyvalues::GetInt() const
 {
-	return intkey;
+	return intval;
 }
 
 const float keyvalues::GetFloat() const
 {
 	return floatval;
 }
+
+template<typename T>
+const T& keyvalues::GetPtr() const
+{
+	return *reinterpret_cast<T*>(ptr);
+}
+
+const void* keyvalues::GetPtr() const
+{
+	return ptr;
+}
+
 
 keyvalues* keyvalues::GetFirstSubkey()
 {
@@ -225,14 +233,20 @@ keyvalues* keyvalues::GetFirstSubkey()
 							}
 							kv->tokens = KvToks;
 							kv->UseEscapeSequence(UsesEscapeSequence);
+							kv->ptr = ptr;
 							m_bPeer = kv;
 							return kv;
 						}
 						KvToks.push_back({ tokens[j].token, tokens[j].value });
 					}
 				}
+				else {
+					return nullptr;
+				}
 			}
 		}
+		delete kv;
+		return nullptr;
 	}
 	else {
 		i = FirstSubkey;
@@ -265,6 +279,7 @@ keyvalues* keyvalues::GetNextSubkey()
 							}
 							kv->tokens = KvToks;
 							kv->UseEscapeSequence(UsesEscapeSequence);
+							kv->ptr = ptr;
 							return kv;
 						}
 						KvToks.push_back({ tokens[j].token, tokens[j].value });
@@ -272,6 +287,8 @@ keyvalues* keyvalues::GetNextSubkey()
 				}
 			}
 		}
+		delete kv;
+		return nullptr;
 	}
 	return nullptr;
 }
@@ -305,8 +322,9 @@ keyvalues* keyvalues::GetFirstValue()
 					if (tokens[v].token == TokenType::KEY) {
 						kv->name = tokens[v].value;
 						kv->value = tokens[v + 1].value;
-						kv->intkey = atoi(tokens[v + 1].value.c_str());
+						kv->intval = atoi(tokens[v + 1].value.c_str());
 						kv->floatval = (float)atof(tokens[v + 1].value.c_str());
+						kv->ptr = ptr;
 						kv->UseEscapeSequence(UsesEscapeSequence);
 						
 						FirstKey = v + 2;
@@ -317,6 +335,8 @@ keyvalues* keyvalues::GetFirstValue()
 					}
 				}
 			}
+			delete kv;
+			return nullptr;
 		}
 	}
 	else {
@@ -355,8 +375,9 @@ keyvalues* keyvalues::GetNextValue()
 					if (tokens[v].token == TokenType::KEY) {
 						kv->name = tokens[v].value;
 						kv->value = tokens[v + 1].value;
-						kv->intkey = atoi(tokens[v + 1].value.c_str());
+						kv->intval = atoi(tokens[v + 1].value.c_str());
 						kv->floatval = (float)atof(tokens[v + 1].value.c_str());
+						kv->ptr = ptr;
 						kv->UseEscapeSequence(UsesEscapeSequence);
 					
 						v = v + 2;
@@ -366,6 +387,7 @@ keyvalues* keyvalues::GetNextValue()
 			}
 		}
 	}
+	delete kv;
 	return nullptr;
 }
 
@@ -395,4 +417,29 @@ keyvalues* keyvalues::FindKey(const std::string& key)
 void keyvalues::UseEscapeSequence(bool val)
 {
 	UsesEscapeSequence = val;
+}
+
+void keyvalues::SetPtr(void* newptr)
+{
+	ptr = newptr;
+}
+
+void keyvalues::SetName(const std::string& name)
+{
+	this->name = name;
+}
+
+void keyvalues::SetValue(const std::string& name)
+{
+	this->name = value;
+}
+
+void keyvalues::SetValue(const int& name)
+{
+	this->intval = name;
+}
+
+void keyvalues::SetValue(const float& name)
+{
+	this->floatval = name;
 }
