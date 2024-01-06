@@ -1,7 +1,7 @@
 #include "keyvalues.h"
 #include <fstream>
 #include <sstream>
-
+// Fuck there are so many memory leaks. I'm gonna fix them soon though
 std::string ConvertEscapeChars(const std::string& input) {
 	std::string result;
 
